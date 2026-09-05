@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Local databases & temp storage
+*.db
+*.sqlite3
+peblo_tv.db
+storage/catalog/catalogue.*.tmp
+dist/
+
+# Environment
+.env
+
+# System & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

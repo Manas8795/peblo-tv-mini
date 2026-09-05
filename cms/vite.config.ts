@@ -1,0 +1,21 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  server: {
+    port: 3000,
+    host: true,
+    proxy: {
+      '/shows': 'http://127.0.0.1:8000',
+      '/seasons': 'http://127.0.0.1:8000',
+      '/episodes': 'http://127.0.0.1:8000',
+      '/artwork': 'http://127.0.0.1:8000',
+      '/admin': 'http://127.0.0.1:8000',
+      '/catalog': 'http://127.0.0.1:8000',
+      '/health': 'http://127.0.0.1:8000',
+      '/media': 'http://127.0.0.1:8000',
+    }
+  }
+});
