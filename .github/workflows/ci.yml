@@ -26,16 +26,16 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r peblo-tv-mini/api/requirements.txt
+          pip install -r api/requirements.txt
           pip install pytest flake8
 
       - name: Lint Backend Code
         run: |
           # Stop the build if there are Python syntax errors or undefined names
-          flake8 peblo-tv-mini/api --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 api --count --select=E9,F63,F7,F82 --show-source --statistics
 
       - name: Run Pytest Suite (Artwork, Atomicity, Content Group, Roles, Search)
-        working-directory: ./peblo-tv-mini/api
+        working-directory: ./api
         run: |
           pytest tests -v
 
@@ -55,17 +55,17 @@ jobs:
           node-version: 20
           cache: "npm"
           cache-dependency-path: |
-            peblo-tv-mini/cms/package.json
-            peblo-tv-mini/viewer/package.json
+            cms/package-lock.json
+            viewer/package-lock.json
 
       - name: Typecheck and Build CMS
-        working-directory: ./peblo-tv-mini/cms
+        working-directory: ./cms
         run: |
           npm ci
           npm run build
 
       - name: Typecheck and Build Viewer
-        working-directory: ./peblo-tv-mini/viewer
+        working-directory: ./viewer
         run: |
           npm ci
           npm run build
@@ -87,21 +87,21 @@ jobs:
       - name: Build API Image
         uses: docker/build-push-action@v5
         with:
-          context: ./peblo-tv-mini/api
+          context: ./api
           push: false
           tags: peblo-api:${{ github.sha }}
 
       - name: Build CMS Image
         uses: docker/build-push-action@v5
         with:
-          context: ./peblo-tv-mini/cms
+          context: ./cms
           push: false
           tags: peblo-cms:${{ github.sha }}
 
       - name: Build Viewer Image
         uses: docker/build-push-action@v5
         with:
-          context: ./peblo-tv-mini/viewer
+          context: ./viewer
           push: false
           tags: peblo-viewer:${{ github.sha }}
 
