@@ -146,15 +146,18 @@ class ValidationService:
         cleaned_grouped = {k: v for k, v in grouped.items() if len(v) > 0}
         total_issues = sum(len(v) for v in cleaned_grouped.values())
         
-        # Severe blockers that strictly prevent publishing
-        critical_blockers = (
-            len(grouped["missing_section"]) +
-            len(grouped["missing_duration"]) +
-            len(grouped["duplicate_content_group_language"])
-        )
+        # Severe blockers on published content (draft items do not block publishing valid shows)
+        published_shows_count = db.query(Show).filter(Show.status == "published", Show.section.isnot(None)).count()
+        
+        # Blockers: published shows missing section or published episodes missing duration
+        published_blockers = [
+            item for item in (grouped["missing_section"] + grouped["missing_duration"])
+            if item.entity_id in [s.id for s in shows if s.status == "published"] or
+               item.entity_id in [e.id for e in episodes if e.status == "published"]
+        ]
 
         return ValidationReport(
-            is_publishable=(critical_blockers == 0),
+            is_publishable=(published_shows_count > 0 and len(published_blockers) == 0),
             total_issues=total_issues,
             grouped_by_cause=cleaned_grouped,
             summary={k: len(v) for k, v in grouped.items() if len(v) > 0}
